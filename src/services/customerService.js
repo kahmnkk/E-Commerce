@@ -19,8 +19,8 @@ const utils = require('@src/utils/utils');
 /**
  *
  * @param {String} store Store Id
- * @param {String} email customer email
- * @param {String} password customer password
+ * @param {String} email Customer email
+ * @param {String} password Customer password
  * @returns {Promise<CustomerModel>}
  */
 exports.getCustomer = async function (store, email, password) {
@@ -45,9 +45,9 @@ exports.getCustomer = async function (store, email, password) {
 /**
  *
  * @param {String} store Store Id
- * @param {String} name customer name
- * @param {String} email customer email
- * @param {String} password customer password
+ * @param {String} name Customer name
+ * @param {String} email Customer email
+ * @param {String} password Customer password
  * @returns {Promise<CustomerModel>}
  */
 exports.signUp = async function (store, name, email, password) {
@@ -79,7 +79,7 @@ exports.signUp = async function (store, name, email, password) {
 /**
  *
  * @param {String} store Store Id
- * @param {String} email customer email
+ * @param {String} email Customer email
  * @returns {Promise<CustomerModel>}
  */
 exports.checkDuplicateEmail = async function (store, email) {
@@ -92,16 +92,16 @@ exports.checkDuplicateEmail = async function (store, email) {
 
 /**
  *
- * @returns {Promise<Number>} customer ID
+ * @returns {Promise<Number>} Customer ID
  */
 async function genID() {
-    return await dbMgr.redis.gen.client.incrby('gen:customer', 1);
+    return (await dbMgr.redis.gen.client.incrby('gen:customer', 1)) + '';
 }
 
 /**
  *
  * @param {String} store Store Id
- * @param {String} email customer email
+ * @param {String} email Customer email
  * @returns {Promise<CustomerModel>}
  */
 async function selectCustomer(store, email) {
@@ -111,7 +111,7 @@ async function selectCustomer(store, email) {
 
 /**
  *
- * @param {CustomerModel} customer customer data
+ * @param {CustomerModel} customer Customer data
  * @returns {String} Query String
  */
 function insertCustomer(customer) {
