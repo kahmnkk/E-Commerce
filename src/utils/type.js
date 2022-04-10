@@ -31,3 +31,5 @@ exports.HttpStatus = Object.freeze({
     InternalServerError: 500,
     NotImplemented: 501,
 });
+
+exports.StoreCacheKey = 'KEY_STORE';
