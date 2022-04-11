@@ -72,6 +72,13 @@ const errors = {
         statusCode: Type.HttpStatus.Conflict,
         message: 'duplicated email',
     },
+
+    // Store
+    invalidStoreId: {
+        code: 12001,
+        statusCode: Type.HttpStatus.NotFound,
+        message: 'invalid store id',
+    },
 };
 
 module.exports = errors;

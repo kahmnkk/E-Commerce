@@ -24,7 +24,7 @@ const utils = require('@src/utils/utils');
  * @returns {Promise<CustomerModel>}
  */
 exports.getCustomer = async function (store, email, password) {
-    const customer = await selectCustomer(store, email);
+    const customer = await querySelect(store, email);
     if (customer == null) {
         throw utils.errorHandling(errors.invalidCustomerEmail);
     }
@@ -53,7 +53,7 @@ exports.getCustomer = async function (store, email, password) {
 exports.signUp = async function (store, name, email, password) {
     let querys = [];
 
-    const checkEmail = await selectCustomer(store, email);
+    const checkEmail = await querySelect(store, email);
     if (checkEmail != null) {
         throw utils.errorHandling(errors.duplicatedEmail);
     }
@@ -71,7 +71,7 @@ exports.signUp = async function (store, name, email, password) {
     customer.email = email;
     customer.password = cryptoPassword;
 
-    querys.push(insertCustomer(customer));
+    querys.push(queryInsert(customer));
 
     await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
 };
@@ -83,7 +83,7 @@ exports.signUp = async function (store, name, email, password) {
  * @returns {Promise<CustomerModel>}
  */
 exports.checkDuplicateEmail = async function (store, email) {
-    const customer = await selectCustomer(store, email);
+    const customer = await querySelect(store, email);
     if (customer == null) {
         return false;
     }
@@ -104,7 +104,7 @@ async function genID() {
  * @param {String} email Customer email
  * @returns {Promise<CustomerModel>}
  */
-async function selectCustomer(store, email) {
+async function querySelect(store, email) {
     const [result] = await dbMgr.mysql.commerce.makeAndQuery(querys.commerce.selectCustomer, store, email);
     return result;
 }
@@ -114,7 +114,7 @@ async function selectCustomer(store, email) {
  * @param {CustomerModel} customer Customer data
  * @returns {String} Query String
  */
-function insertCustomer(customer) {
+function queryInsert(customer) {
     // INSERT INTO tb_commerce_customer (id, store, name, email, password) VALUES (?, ?, ?, ?, ?)
     const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertCustomer, customer.id, customer.store, customer.name, customer.email, customer.password);
     return query;

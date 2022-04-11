@@ -7,6 +7,7 @@ const query = {
         // tb_commerce_store
         selectStore: 'SELECT id, name, custom FROM tb_commerce_store WHERE id = ?',
         insertStore: 'INSERT INTO tb_commerce_store (id, name, custom) VALUES (?, ?, ?)',
+        updateStore: 'UPDATE tb_commerce_store SET name = ?, custom = ? WHERE id = ?',
     },
 };
 
