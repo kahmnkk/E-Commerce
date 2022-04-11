@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS `tb_commerce_store`;
 CREATE TABLE `tb_commerce_store` (
   `id` varchar(254) NOT NULL,
   `name` varchar(254) NOT NULL,
+  `custom` json NOT NULL,
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

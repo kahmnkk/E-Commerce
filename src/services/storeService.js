@@ -26,21 +26,17 @@ exports.getStore = async function (id) {
 /**
  *
  * @param {String} name Store name
+ * @param {Object} custom Store custom field
  * @returns {Promise<StoreModel>}
  */
-exports.addStore = async function (name) {
-    let querys = [];
-    let cmds = [];
-
+exports.addStore = async function (name, custom) {
     const store = new StoreModel();
     store.id = await genID();
     store.name = name;
+    store.custom = custom;
 
-    querys.push(queryInsert(store));
-    cmds.push(cmdHset(store));
-
-    await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
-    await dbMgr.redis.commerce.multiCmd(cmds);
+    await dbMgr.set(dbMgr.mysqlConn.commerce, [queryInsert(store)]);
+    await dbMgr.redis.commerce.multiCmd([cmdHset(store)]);
 
     return store;
 };
@@ -52,23 +48,47 @@ exports.addStore = async function (name) {
  * @param {Object} custom Store custom field
  * @returns {Promise<StoreModel>}
  */
-exports.updateStore = async function (id, name) {
-    let querys = [];
-    let cmds = [];
-
+exports.updateStore = async function (id, name, custom) {
     let store = await querySelect(id);
     if (store == null) {
         throw utils.errorHandling(errors.invalidStoreId);
     }
+
     store.name = name;
+    store.custom = custom;
 
-    querys.push(queryUpdate(store));
-    cmds.push(cmdHset(store));
-
-    await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
-    await dbMgr.redis.commerce.multiCmd(cmds);
+    await dbMgr.set(dbMgr.mysqlConn.commerce, [queryUpdate(store)]);
+    await dbMgr.redis.commerce.multiCmd([cmdHset(store)]);
 
     return store;
+};
+
+/**
+ *
+ * @param {Object} storeCustom Store Custom field { ${modelName}: Array<String>, ... }
+ *                             ex) { CUSTOMER: ['전화번호', '성별'], PRODUCT: ['도서 발행일', '유통기한'], ... }
+ * @param {typeof Type.Models} modelName Model name (Cutomer, Product, Order, ...)
+ * @param {Array<Object>} modelCustom Model custom field (Cutomer, Product, Order, ...) [{ key, value }, ...]
+ * @returns {boolean}
+ */
+exports.checkCustom = function (storeCustom, modelName, modelCustom) {
+    if (storeCustom[modelName] == null && modelCustom.length == 0) {
+        return true;
+    } else if (storeCustom[modelName] != null) {
+        let isValid = true;
+        const modelCustomKeys = modelCustom.map((x) => x.key);
+        for (let i in storeCustom[modelName]) {
+            if (modelCustomKeys.includes(storeCustom[modelName][i]) == false) {
+                isValid = false;
+                break;
+            }
+        }
+        if (isValid == true) {
+            return true;
+        }
+    }
+
+    return false;
 };
 
 /**
@@ -101,8 +121,8 @@ async function querySelect(id) {
  * @returns {String} Query String
  */
 function queryInsert(store) {
-    // INSERT INTO tb_commerce_store (id, name) VALUES (?, ?)
-    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertStore, store.id, store.name);
+    // INSERT INTO tb_commerce_store (id, name, custom) VALUES (?, ?, ?)
+    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertStore, store.id, store.name, JSON.stringify(store.custom));
     return query;
 }
 
@@ -112,8 +132,8 @@ function queryInsert(store) {
  * @returns {String} Query String
  */
 function queryUpdate(store) {
-    // UPDATE tb_commerce_store SET name = ? WHERE id = ?
-    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.updateStore, store.name, store.id);
+    // UPDATE tb_commerce_store SET name = ?, custom = ? WHERE id = ?
+    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.updateStore, store.name, JSON.stringify(store.custom), store.id);
     return query;
 }
 

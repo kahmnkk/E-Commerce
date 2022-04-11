@@ -7,6 +7,7 @@ class StoreModel extends BaseModel {
 
         this.id = null;
         this.name = null;
+        this.custom = null; // { ${ModelName}: Array<String>, ... } { CUSTOMER: ['전화번호', '성별'], PRODUCT: ['도서 발행일', '유통기한'], ... }
     }
 }
 

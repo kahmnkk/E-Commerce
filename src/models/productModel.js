@@ -10,7 +10,7 @@ class ProductModel extends BaseModel {
         this.name = null;
         this.price = null;
         this.categories = null;
-        this.custom = null; // [ { key: ${key}, value: ${value} }, ... ]
+        this.custom = null; // [ { key, value }, ... ]
     }
 }
 

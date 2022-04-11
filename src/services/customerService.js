@@ -39,42 +39,38 @@ exports.signIn = async function (store, email, password) {
 
 /**
  *
- * @param {String} store Store Id
+ * @param {String} storeId Store Id
  * @param {String} name Customer name
  * @param {String} email Customer email
  * @param {String} password Customer password
  * @param {String} custom Customer custom field
  * @returns {Promise<CustomerModel>}
  */
-exports.signUp = async function (store, name, email, password, custom) {
-    let querys = [];
-
-    const checkEmail = await querySelect(store, email);
+exports.signUp = async function (storeId, name, email, password, custom) {
+    const checkEmail = await querySelect(storeId, email);
     if (checkEmail != null) {
         throw utils.errorHandling(errors.duplicatedEmail);
     }
 
     const customer = new CustomerModel();
     customer.id = await genID();
-    customer.store = store;
+    customer.store = storeId;
     customer.name = name;
     customer.email = email;
     customer.password = await encrypt(password);
     customer.custom = custom;
 
-    querys.push(queryInsert(customer));
-
-    await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
+    await dbMgr.set(dbMgr.mysqlConn.commerce, [queryInsert(customer)]);
 };
 
 /**
  *
- * @param {String} store Store Id
+ * @param {String} storeId Store Id
  * @param {String} email Customer email
  * @returns {Promise<CustomerModel>}
  */
-exports.checkDuplicateEmail = async function (store, email) {
-    const customer = await querySelect(store, email);
+exports.checkDuplicateEmail = async function (storeId, email) {
+    const customer = await querySelect(storeId, email);
     if (customer == null) {
         return false;
     }
@@ -91,12 +87,12 @@ async function genID() {
 
 /**
  *
- * @param {String} store Store Id
+ * @param {String} storeId Store Id
  * @param {String} email Customer email
  * @returns {Promise<CustomerModel>}
  */
-async function querySelect(store, email) {
-    const result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectCustomer, store, email);
+async function querySelect(storeId, email) {
+    const result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectCustomer, storeId, email);
     return result;
 }
 

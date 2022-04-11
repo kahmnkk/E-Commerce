@@ -1,5 +1,6 @@
 // Service
 const customerService = require('@src/services/customerService');
+const storeService = require('@src/services/storeService');
 
 // Common
 const errors = require('@src/errors');
@@ -72,13 +73,18 @@ exports.signUp = async function (req, res) {
             throw utils.errorHandling(errors.invalidRequestData);
         }
 
-        const store = body[reqKeys.store];
+        const storeId = body[reqKeys.store];
         const name = body[reqKeys.name];
         const email = body[reqKeys.email];
         const password = body[reqKeys.password];
         const custom = body[reqKeys.custom];
 
-        await customerService.signUp(store, name, email, password, custom);
+        const store = await storeService.getStore(storeId);
+        if (storeService.checkCustom(store.custom, Type.Models.CUSTOMER, custom) == false) {
+            throw utils.errorHandling(errors.customFieldMismatch);
+        }
+
+        await customerService.signUp(storeId, name, email, password, custom);
 
         response[resKeys.result] = true;
         session.send(response, Type.HttpStatus.OK);

@@ -38,6 +38,7 @@ exports.get = async function (req, res) {
         response[resKeys.id] = store.id;
         response[resKeys.name] = store.name;
         response[resKeys.products] = products;
+        response[resKeys.custom] = store.custom;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);
@@ -47,6 +48,7 @@ exports.get = async function (req, res) {
 exports.add = async function (req, res) {
     const reqKeys = {
         name: 'name',
+        custom: 'custom',
     };
     const resKeys = {
         id: 'id',
@@ -64,8 +66,9 @@ exports.add = async function (req, res) {
         }
 
         const name = body[reqKeys.name];
+        const custom = body[reqKeys.custom];
 
-        const store = await storeService.addStore(name);
+        const store = await storeService.addStore(name, custom);
 
         response[resKeys.id] = store.id;
         response[resKeys.name] = store.name;

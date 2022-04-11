@@ -31,14 +31,18 @@ exports.add = async function (req, res) {
             throw utils.errorHandling(errors.invalidRequestData);
         }
 
-        const store = body[reqKeys.store];
+        const storeId = body[reqKeys.store];
         const name = body[reqKeys.name];
         const price = body[reqKeys.price];
         const categories = body[reqKeys.categories];
         const custom = body[reqKeys.custom];
 
-        await storeService.getStore(store);
-        await productService.addProduct(store, name, price, categories, custom);
+        const store = await storeService.getStore(storeId);
+        if (storeService.checkCustom(store.custom, Type.Models.PRODUCT, custom) == false) {
+            throw utils.errorHandling(errors.customFieldMismatch);
+        }
+
+        await productService.addProduct(storeId, name, price, categories, custom);
 
         response[resKeys.result] = true;
         session.send(response, Type.HttpStatus.OK);

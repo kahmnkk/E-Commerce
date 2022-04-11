@@ -22,45 +22,53 @@ exports.getProductByStore = async function (storeId) {
 
 /**
  *
- * @param {String} store Store ID
+ * @param {Array<String>} ids Product ID Array
+ * @param {String} storeId Store ID
+ * @returns {Promise<Array<ProductModel>>}
+ */
+exports.getProducts = async function (ids, storeId = null) {
+    let products = null;
+    if (storeId != null) {
+        products = await querySelectByStore(storeId);
+        products = products.filter((x) => ids.includes(x.id) == true);
+    } else {
+        products = await querySelectByIds(ids);
+    }
+    return products;
+};
+
+/**
+ *
+ * @param {String} storeId Store ID
  * @param {String} name Product name
  * @param {Number} price Product price
  * @param {Array<String>} categories Product categories
  * @param {Object} custom Product custom field
  */
-exports.addProduct = async function (store, name, price, categories, custom) {
-    let querys = [];
-    let cmds = [];
-
+exports.addProduct = async function (storeId, name, price, categories, custom) {
     const product = new ProductModel();
     product.id = await genID();
-    product.store = store;
+    product.store = storeId;
     product.name = name;
     product.price = price;
     product.categories = categories;
     product.custom = custom;
 
-    querys.push(queryInsert(product));
-    cmds.push(cmdHset(product));
-
-    await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
-    await dbMgr.redis.commerce.multiCmd(cmds);
+    await dbMgr.set(dbMgr.mysqlConn.commerce, [queryInsert(product)]);
+    await dbMgr.redis.commerce.multiCmd([cmdHset(product)]);
 };
 
 /**
  *
  * @param {String} id Product ID
- * @param {String} store Store ID
+ * @param {String} storeId Store ID
  * @param {String} name Product name
  * @param {Number} price Product price
  * @param {Array<String>} categories Product categories
  * @param {Object} custom Product custom field
  */
-exports.updateProduct = async function (id, store, name, price, categories, custom) {
-    let querys = [];
-    let cmds = [];
-
-    let product = await querySelect(id, store);
+exports.updateProduct = async function (id, storeId, name, price, categories, custom) {
+    let product = await querySelect(id, storeId);
     if (product == null) {
         throw utils.errorHandling(errors.invalidProductId);
     }
@@ -69,11 +77,8 @@ exports.updateProduct = async function (id, store, name, price, categories, cust
     product.categories = categories;
     product.custom = custom;
 
-    querys.push(queryUpdate(product));
-    cmds.push(cmdHset(product));
-
-    await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
-    await dbMgr.redis.commerce.multiCmd(cmds);
+    await dbMgr.set(dbMgr.mysqlConn.commerce, [queryUpdate(product)]);
+    await dbMgr.redis.commerce.multiCmd([cmdHset(product)]);
 };
 
 /**
@@ -133,6 +138,16 @@ async function querySelectByStore(storeId) {
         }
         await dbMgr.redis.commerce.multiCmd(cmds);
     }
+    return result;
+}
+
+/**
+ *
+ * @param {String} ids Product Id Array
+ * @returns {Promise<Array<ProductModel>>}
+ */
+async function querySelectByIds(ids) {
+    const result = await dbMgr.mysql.commerce.makeAndQuery(querys.commerce.selectProducts, ids);
     return result;
 }
 
