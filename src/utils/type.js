@@ -33,3 +33,4 @@ exports.HttpStatus = Object.freeze({
 });
 
 exports.StoreCacheKey = 'KEY_STORE';
+exports.ProductCacheKey = 'KEY_PRODUCT';

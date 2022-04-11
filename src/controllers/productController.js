@@ -1,6 +1,6 @@
 // Service
-const storeService = require('@src/services/storeService');
 const productService = require('@src/services/productService');
+const storeService = require('@src/services/storeService');
 
 // Common
 const errors = require('@src/errors');
@@ -10,48 +10,16 @@ const SessionMgr = require('@src/utils/sessionMgr');
 const utils = require('@src/utils/utils');
 const Type = require('@root/src/utils/type');
 
-exports.get = async function (req, res) {
-    const reqKeys = {
-        id: 'id',
-    };
-    const resKeys = {
-        id: 'id',
-        name: 'name',
-        products: 'products',
-        custom: 'custom',
-    };
-
-    const session = new SessionMgr(req, res);
-    const body = session.body;
-    const response = {};
-
-    try {
-        if (utils.hasKeys(reqKeys, body) == false) {
-            throw utils.errorHandling(errors.invalidRequestData);
-        }
-
-        const id = body[reqKeys.id];
-
-        const store = await storeService.getStore(id);
-        const products = await productService.getProductByStore(id);
-
-        response[resKeys.id] = store.id;
-        response[resKeys.name] = store.name;
-        response[resKeys.products] = products;
-        session.send(response, Type.HttpStatus.OK);
-    } catch (err) {
-        session.error(err);
-    }
-};
-
 exports.add = async function (req, res) {
     const reqKeys = {
+        store: 'store',
         name: 'name',
+        price: 'price',
+        categories: 'categories',
+        custom: 'custom',
     };
     const resKeys = {
-        id: 'id',
-        name: 'name',
-        custom: 'custom',
+        result: 'result',
     };
 
     const session = new SessionMgr(req, res);
@@ -63,12 +31,16 @@ exports.add = async function (req, res) {
             throw utils.errorHandling(errors.invalidRequestData);
         }
 
+        const store = body[reqKeys.store];
         const name = body[reqKeys.name];
+        const price = body[reqKeys.price];
+        const categories = body[reqKeys.categories];
+        const custom = body[reqKeys.custom];
 
-        const store = await storeService.addStore(name);
+        await storeService.getStore(store);
+        await productService.addProduct(store, name, price, categories, custom);
 
-        response[resKeys.id] = store.id;
-        response[resKeys.name] = store.name;
+        response[resKeys.result] = true;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);
@@ -78,11 +50,14 @@ exports.add = async function (req, res) {
 exports.update = async function (req, res) {
     const reqKeys = {
         id: 'id',
+        store: 'store',
         name: 'name',
+        price: 'price',
+        categories: 'categories',
+        custom: 'custom',
     };
     const resKeys = {
-        id: 'id',
-        name: 'name',
+        result: 'result',
     };
 
     const session = new SessionMgr(req, res);
@@ -95,12 +70,15 @@ exports.update = async function (req, res) {
         }
 
         const id = body[reqKeys.id];
+        const store = body[reqKeys.store];
         const name = body[reqKeys.name];
+        const price = body[reqKeys.price];
+        const categories = body[reqKeys.categories];
+        const custom = body[reqKeys.custom];
 
-        const store = await storeService.updateStore(id, name);
+        await productService.updateProduct(id, store, name, price, categories, custom);
 
-        response[resKeys.id] = store.id;
-        response[resKeys.name] = store.name;
+        response[resKeys.result] = true;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);

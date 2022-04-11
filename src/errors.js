@@ -79,6 +79,13 @@ const errors = {
         statusCode: Type.HttpStatus.NotFound,
         message: 'invalid store id',
     },
+
+    // Product
+    invalidProductId: {
+        code: 13001,
+        statusCode: Type.HttpStatus.NotFound,
+        message: 'invalid product id',
+    },
 };
 
 module.exports = errors;
