@@ -36,8 +36,7 @@ exports.get = async function (req, res) {
 
         response[resKeys.id] = store.id;
         response[resKeys.name] = store.name;
-        // response[resKeys.products] = products;
-        response[resKeys.custom] = store.custom;
+        response[resKeys.products] = products;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);
@@ -69,7 +68,6 @@ exports.add = async function (req, res) {
 
         response[resKeys.id] = store.id;
         response[resKeys.name] = store.name;
-        response[resKeys.custom] = store.custom;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);
@@ -80,12 +78,10 @@ exports.update = async function (req, res) {
     const reqKeys = {
         id: 'id',
         name: 'name',
-        custom: 'custom',
     };
     const resKeys = {
         id: 'id',
         name: 'name',
-        custom: 'custom',
     };
 
     const session = new SessionMgr(req, res);
@@ -99,13 +95,11 @@ exports.update = async function (req, res) {
 
         const id = body[reqKeys.id];
         const name = body[reqKeys.name];
-        const custom = body[reqKeys.custom];
 
-        const store = await storeService.updateStore(id, name, custom);
+        const store = await storeService.updateStore(id, name);
 
         response[resKeys.id] = store.id;
         response[resKeys.name] = store.name;
-        response[resKeys.custom] = store.custom;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);

@@ -35,7 +35,6 @@ exports.addStore = async function (name) {
     const store = new StoreModel();
     store.id = await genID();
     store.name = name;
-    store.custom = {};
 
     querys.push(queryInsert(store));
     cmds.push(['hset', Type.StoreCacheKey, store.id, JSON.stringify(store)]);
@@ -53,7 +52,7 @@ exports.addStore = async function (name) {
  * @param {Object} custom Store custom field
  * @returns {Promise<StoreModel>}
  */
-exports.updateStore = async function (id, name, custom) {
+exports.updateStore = async function (id, name) {
     let querys = [];
     let cmds = [];
 
@@ -62,7 +61,6 @@ exports.updateStore = async function (id, name, custom) {
         throw utils.errorHandling(errors.invalidStoreId);
     }
     store.name = name;
-    store.custom = custom;
 
     querys.push(queryUpdate(store));
     cmds.push(['hset', Type.StoreCacheKey, store.id, JSON.stringify(store)]);
@@ -102,8 +100,8 @@ async function querySelect(id) {
  * @returns {String} Query String
  */
 function queryInsert(store) {
-    // INSERT INTO tb_commerce_store (id, name, custom) VALUES (?, ?, ?)
-    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertStore, store.id, store.name, JSON.stringify(store.custom));
+    // INSERT INTO tb_commerce_store (id, name) VALUES (?, ?)
+    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertStore, store.id, store.name);
     return query;
 }
 
@@ -113,7 +111,7 @@ function queryInsert(store) {
  * @returns {String} Query String
  */
 function queryUpdate(store) {
-    // UPDATE tb_commerce_store SET name = ?, custom = ? WHERE id = ?
-    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.updateStore, store.name, JSON.stringify(store.custom), store.id);
+    // UPDATE tb_commerce_store SET name = ? WHERE id = ?
+    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.updateStore, store.name, store.id);
     return query;
 }

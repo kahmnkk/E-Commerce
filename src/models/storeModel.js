@@ -7,7 +7,6 @@ class StoreModel extends BaseModel {
 
         this.id = null;
         this.name = null;
-        this.custom = null;
     }
 }
 

@@ -6,10 +6,10 @@ const router = express.Router();
 const CustomerController = require('@src/controllers/customerController');
 
 // GET
+router.get('/check-duplicate-email', CustomerController.checkDuplicateEmail);
 
 // POST
 router.post('/sign-in', CustomerController.signIn);
 router.post('/sign-up', CustomerController.signUp);
-router.post('/check-duplicate-email', CustomerController.checkDuplicateEmail);
 
 module.exports = router;

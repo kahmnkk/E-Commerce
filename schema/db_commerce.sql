@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS `tb_commerce_store`;
 CREATE TABLE `tb_commerce_store` (
   `id` varchar(254) NOT NULL,
   `name` varchar(254) NOT NULL,
-  `custom` json NOT NULL,
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -18,6 +17,7 @@ CREATE TABLE `tb_commerce_customer` (
   `name` varchar(254) NOT NULL,
   `email` varchar(254) NOT NULL,
   `password` varchar(254) NOT NULL,
+  `custom` json NOT NULL,
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -31,6 +31,7 @@ CREATE TABLE `tb_commerce_product` (
   `name` varchar(254) NOT NULL,
   `price` int unsigned NOT NULL,
   `categories` json NOT NULL,
+  `custom` json NOT NULL,
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -45,6 +46,7 @@ CREATE TABLE `tb_commerce_order` (
   `customer` varchar(254) NOT NULL,
   `products` json NOT NULL,
   `price` int unsigned NOT NULL,
+  `custom` json NOT NULL,
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

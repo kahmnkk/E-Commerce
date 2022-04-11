@@ -48,9 +48,10 @@ exports.getCustomer = async function (store, email, password) {
  * @param {String} name Customer name
  * @param {String} email Customer email
  * @param {String} password Customer password
+ * @param {String} custom Customer custom field
  * @returns {Promise<CustomerModel>}
  */
-exports.signUp = async function (store, name, email, password) {
+exports.signUp = async function (store, name, email, password, custom) {
     let querys = [];
 
     const checkEmail = await querySelect(store, email);
@@ -70,6 +71,7 @@ exports.signUp = async function (store, name, email, password) {
     customer.name = name;
     customer.email = email;
     customer.password = cryptoPassword;
+    customer.custom = custom;
 
     querys.push(queryInsert(customer));
 
@@ -115,7 +117,7 @@ async function querySelect(store, email) {
  * @returns {String} Query String
  */
 function queryInsert(customer) {
-    // INSERT INTO tb_commerce_customer (id, store, name, email, password) VALUES (?, ?, ?, ?, ?)
-    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertCustomer, customer.id, customer.store, customer.name, customer.email, customer.password);
+    // INSERT INTO tb_commerce_customer (id, store, name, email, password, custom) VALUES (?, ?, ?, ?, ?, ?)
+    const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertCustomer, customer.id, customer.store, customer.name, customer.email, customer.password, JSON.stringify(customer.custom));
     return query;
 }
