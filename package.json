@@ -4,8 +4,7 @@
     "main": "index.js",
     "license": "MIT",
     "scripts": {
-        "api": "node src/index.js api",
-        "socket": "node src/index.js socket"
+        "start": "node app"
     },
     "_moduleAliases": {
         "@root": "",
