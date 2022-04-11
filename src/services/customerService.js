@@ -23,18 +23,13 @@ const utils = require('@src/utils/utils');
  * @param {String} password Customer password
  * @returns {Promise<CustomerModel>}
  */
-exports.getCustomer = async function (store, email, password) {
+exports.signIn = async function (store, email, password) {
     const customer = await querySelect(store, email);
     if (customer == null) {
         throw utils.errorHandling(errors.invalidCustomerEmail);
     }
 
-    let cryptoPassword = '';
-    crypto.pbkdf2(password, salt, 10000, 64, 'sha512', (err, derivedKey) => {
-        if (err) throw err;
-        cryptoPassword = derivedKey.toString('hex');
-    });
-
+    const cryptoPassword = await encrypt(password);
     if (cryptoPassword != customer.password) {
         throw utils.errorHandling(errors.customerPasswordMismatch);
     }
@@ -59,18 +54,12 @@ exports.signUp = async function (store, name, email, password, custom) {
         throw utils.errorHandling(errors.duplicatedEmail);
     }
 
-    let cryptoPassword = '';
-    crypto.pbkdf2(password, salt, 10000, 64, 'sha512', (err, derivedKey) => {
-        if (err) throw err;
-        cryptoPassword = derivedKey.toString('hex');
-    });
-
     const customer = new CustomerModel();
     customer.id = await genID();
     customer.store = store;
     customer.name = name;
     customer.email = email;
-    customer.password = cryptoPassword;
+    customer.password = await encrypt(password);
     customer.custom = custom;
 
     querys.push(queryInsert(customer));
@@ -94,7 +83,7 @@ exports.checkDuplicateEmail = async function (store, email) {
 
 /**
  *
- * @returns {Promise<Number>} Customer ID
+ * @returns {Promise<String>} Customer ID
  */
 async function genID() {
     return (await dbMgr.redis.gen.client.incrby('gen:customer', 1)) + '';
@@ -107,7 +96,7 @@ async function genID() {
  * @returns {Promise<CustomerModel>}
  */
 async function querySelect(store, email) {
-    const [result] = await dbMgr.mysql.commerce.makeAndQuery(querys.commerce.selectCustomer, store, email);
+    const result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectCustomer, store, email);
     return result;
 }
 
@@ -120,4 +109,13 @@ function queryInsert(customer) {
     // INSERT INTO tb_commerce_customer (id, store, name, email, password, custom) VALUES (?, ?, ?, ?, ?, ?)
     const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.insertCustomer, customer.id, customer.store, customer.name, customer.email, customer.password, JSON.stringify(customer.custom));
     return query;
+}
+
+async function encrypt(password) {
+    return new Promise((resolve, reject) => {
+        crypto.pbkdf2(password, salt, 10000, 64, 'sha512', (err, derivedKey) => {
+            if (err) reject(err);
+            else resolve(derivedKey.toString('hex'));
+        });
+    });
 }

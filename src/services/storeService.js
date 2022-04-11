@@ -37,7 +37,7 @@ exports.addStore = async function (name) {
     store.name = name;
 
     querys.push(queryInsert(store));
-    cmds.push(['hset', Type.StoreCacheKey, store.id, JSON.stringify(store)]);
+    cmds.push(cmdHset(store));
 
     await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
     await dbMgr.redis.commerce.multiCmd(cmds);
@@ -63,7 +63,7 @@ exports.updateStore = async function (id, name) {
     store.name = name;
 
     querys.push(queryUpdate(store));
-    cmds.push(['hset', Type.StoreCacheKey, store.id, JSON.stringify(store)]);
+    cmds.push(cmdHset(store));
 
     await dbMgr.set(dbMgr.mysqlConn.commerce, querys);
     await dbMgr.redis.commerce.multiCmd(cmds);
@@ -73,7 +73,7 @@ exports.updateStore = async function (id, name) {
 
 /**
  *
- * @returns {Promise<Number>} Store ID
+ * @returns {Promise<String>} Store ID
  */
 async function genID() {
     return (await dbMgr.redis.gen.client.incrby('gen:store', 1)) + '';
@@ -85,11 +85,12 @@ async function genID() {
  * @returns {Promise<StoreModel>}
  */
 async function querySelect(id) {
-    let result = await dbMgr.redis.commerce.hget(Type.StoreCacheKey, id);
+    let result = await dbMgr.redis.commerce.client.hget(Type.StoreCacheKey, id);
     if (result != null) {
         result = JSON.parse(result);
     } else {
-        result = await dbMgr.mysql.commerce.makeAndQuery(querys.commerce.selectStore, id);
+        result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectStore, id);
+        await dbMgr.redis.commerce.multiCmd([cmdHset(result)]);
     }
     return result;
 }
@@ -114,4 +115,13 @@ function queryUpdate(store) {
     // UPDATE tb_commerce_store SET name = ? WHERE id = ?
     const query = dbMgr.mysql.commerce.makeQuery(querys.commerce.updateStore, store.name, store.id);
     return query;
+}
+
+/**
+ *
+ * @param {StoreModel} store store data
+ * @returns {String} Redis Command String
+ */
+function cmdHset(store) {
+    return ['hset', Type.StoreCacheKey, store.id, JSON.stringify(store)];
 }

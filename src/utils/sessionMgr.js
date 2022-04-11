@@ -20,7 +20,7 @@ class SessionMgr {
 
         this.sessionKeys = {
             uid: 'uid',
-            id: 'id',
+            cid: 'cid', // customer id
         };
         this.session = req.session;
     }
@@ -76,6 +76,10 @@ class SessionMgr {
 
     getUid() {
         return this.session[this.sessionKeys.uid];
+    }
+
+    getCid() {
+        return this.session[this.sessionKeys.cid];
     }
 }
 

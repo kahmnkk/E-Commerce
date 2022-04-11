@@ -36,9 +36,9 @@ exports.signIn = async function (req, res) {
         const email = body[reqKeys.email];
         const password = body[reqKeys.password];
 
-        const customer = await customerService.getCustomer(store, email, password);
+        const customer = await customerService.signIn(store, email, password);
 
-        session.addValue(req, 'id', customer.id);
+        session.addValue(req, 'cid', customer.id);
 
         response[resKeys.id] = customer.id;
         response[resKeys.store] = customer.store;

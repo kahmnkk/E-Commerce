@@ -10,7 +10,7 @@ class CustomerModel extends BaseModel {
         this.name = null;
         this.email = null;
         this.password = null;
-        this.custom = null;
+        this.custom = null; // [ { key: ${key}, value: ${value} }, ... ]
     }
 }
 
