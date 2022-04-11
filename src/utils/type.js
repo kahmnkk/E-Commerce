@@ -34,3 +34,15 @@ exports.HttpStatus = Object.freeze({
 
 exports.StoreCacheKey = 'KEY_STORE';
 exports.ProductCacheKey = 'KEY_PRODUCT';
+
+exports.OrderStatus = Object.freeze({
+    COMPLETED: 'COMPLETED',
+    CANCELED: 'CANCELED',
+    REFUNDED: 'REFUNDED',
+});
+
+exports.Models = Object.freeze({
+    CUSTOMER: 'CUSTOMER',
+    ORDER: 'ORDER',
+    PRODUCT: 'PRODUCT',
+});
