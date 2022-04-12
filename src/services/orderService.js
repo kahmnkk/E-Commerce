@@ -83,7 +83,7 @@ async function querySelect(id) {
  * @returns {Promise<Array<OrderModel>>}
  */
 async function querySelectByCustomer(customerId) {
-    const result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectOrderByCustomer, customerId);
+    const result = await dbMgr.mysql.commerce.makeAndQuery(querys.commerce.selectOrderByCustomer, customerId);
     return result;
 }
 

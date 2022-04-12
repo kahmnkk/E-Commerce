@@ -20,6 +20,7 @@ const dbMgr = require('@src/database/dbMgr');
 const customerRoute = require('@src/routes/customerRoute');
 const storeRoute = require('@src/routes/storeRoute');
 const productRoute = require('@src/routes/productRoute');
+const orderRoute = require('@src/routes/orderRoute');
 
 class ExpressServer {
     constructor(options) {
@@ -65,6 +66,7 @@ class ExpressServer {
         this.app.use('/customer', customerRoute);
         this.app.use('/store', storeRoute);
         this.app.use('/product', productRoute);
+        this.app.use('/order', orderRoute);
 
         this.app.use((req, res, next) => {
             let err = new Error('404 Not Found');

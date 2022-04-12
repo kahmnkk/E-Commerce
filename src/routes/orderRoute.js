@@ -6,7 +6,7 @@ const router = express.Router();
 const OrderController = require('@src/controllers/orderController');
 
 // GET
-router.post('/', OrderController.history);
+router.get('/', OrderController.history);
 
 // POST
 router.post('/purchase', OrderController.purchase);
