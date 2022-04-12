@@ -83,7 +83,7 @@ exports.checkCustom = function (storeCustom, modelName, modelCustom) {
             }
         }
         for (let i in modelCustom) {
-            if (storeCustom[modelName].includes(modelCustom[i]) == false) {
+            if (storeCustom[modelName].includes(modelCustom[i].key) == false) {
                 return false;
             }
         }
