@@ -25,7 +25,9 @@ class SessionMgr {
     }
 
     send(res, statusCode = Type.HttpStatus.OK) {
-        logger.info('[' + this.res.txid + '] res: ' + JSON.stringify(res));
+        let userId = '0';
+        if (this.getCid() != null) userId = this.getCid();
+        logger.info(`[${this.res.txid}][${userId}] res: ${JSON.stringify(res)}`);
         this.res.status(statusCode).send({ data: res });
     }
 
@@ -36,7 +38,9 @@ class SessionMgr {
         if (err.statusCode == null) {
             err.statusCode = Type.HttpStatus.InternalServerError;
         }
-        logger.error('[' + this.res.txid + '] resError: ' + JSON.stringify(err));
+        let userId = '0';
+        if (this.getCid() != null) userId = this.getCid();
+        logger.error(`[${this.res.txid}][${userId}] resError: ${JSON.stringify(err)}`);
         this.res.status(err.statusCode).send({ error: err });
     }
 

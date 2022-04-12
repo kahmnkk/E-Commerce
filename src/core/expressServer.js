@@ -12,6 +12,7 @@ const errors = require('@src/errors');
 // Utils
 const utils = require('@src/utils/utils');
 const logger = require('@src/utils/logger');
+const Type = require('@src/utils/type');
 
 // Database
 const dbMgr = require('@src/database/dbMgr');
@@ -59,7 +60,12 @@ class ExpressServer {
                 reqs['params'] = req.query;
             }
 
-            logger.info('[' + req['txid'] + '] req: ' + JSON.stringify(reqs));
+            let userId = '0';
+            if (req.session['cid'] != null) {
+                userId = req.session['cid'];
+            }
+
+            logger.info(`[${req['txid']}][${userId}] req: ${JSON.stringify(reqs)}`);
             next();
         });
 
@@ -70,17 +76,21 @@ class ExpressServer {
 
         this.app.use((req, res, next) => {
             let err = new Error('404 Not Found');
-            err['status'] = 404;
+            err['status'] = Type.HttpStatus.NotFound;
             next(err);
         });
 
         this.app.use((err, req, res, next) => {
-            res.status(err['status'] || 500);
+            res.status(err['status'] || Type.HttpStatus.InternalServerError);
             const data = {
                 message: err.message,
                 error: err,
             };
-            logger.error('[' + req['txid'] + '] res: ' + JSON.stringify(data));
+            let userId = '0';
+            if (req.session['cid'] != null) {
+                userId = req.session['cid'];
+            }
+            logger.error(`[${req['txid']}][${userId}] res: ${JSON.stringify(data)}`);
             res.send(data);
         });
 

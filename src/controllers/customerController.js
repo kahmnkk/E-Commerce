@@ -54,6 +54,26 @@ exports.signIn = async function (req, res) {
     }
 };
 
+exports.signOut = async function (req, res) {
+    const reqKeys = {};
+    const resKeys = {
+        result: 'result',
+    };
+
+    const session = new SessionMgr(req, res);
+    const body = session.body;
+    const response = {};
+
+    try {
+        session.remove(req);
+
+        response[resKeys.result] = true;
+        session.send(response, Type.HttpStatus.OK);
+    } catch (err) {
+        session.error(err);
+    }
+};
+
 exports.signUp = async function (req, res) {
     const reqKeys = {
         store: 'store',
