@@ -79,8 +79,12 @@ exports.checkCustom = function (storeCustom, modelName, modelCustom) {
         const modelCustomKeys = modelCustom.map((x) => x.key);
         for (let i in storeCustom[modelName]) {
             if (modelCustomKeys.includes(storeCustom[modelName][i]) == false) {
-                isValid = false;
-                break;
+                return false;
+            }
+        }
+        for (let i in modelCustom) {
+            if (storeCustom[modelName].includes(modelCustom[i]) == false) {
+                return false;
             }
         }
         if (isValid == true) {

@@ -82,10 +82,12 @@ exports.update = async function (req, res) {
     const reqKeys = {
         id: 'id',
         name: 'name',
+        custom: 'custom',
     };
     const resKeys = {
         id: 'id',
         name: 'name',
+        custom: 'custom',
     };
 
     const session = new SessionMgr(req, res);
@@ -99,11 +101,13 @@ exports.update = async function (req, res) {
 
         const id = body[reqKeys.id];
         const name = body[reqKeys.name];
+        const custom = body[reqKeys.custom];
 
-        const store = await storeService.updateStore(id, name);
+        const store = await storeService.updateStore(id, name, custom);
 
         response[resKeys.id] = store.id;
         response[resKeys.name] = store.name;
+        response[resKeys.custom] = store.custom;
         session.send(response, Type.HttpStatus.OK);
     } catch (err) {
         session.error(err);
