@@ -79,6 +79,19 @@ exports.checkDuplicateEmail = async function (storeId, email) {
 
 /**
  *
+ * @param {String} id Customer Id
+ * @returns {Promise<CustomerModel>}
+ */
+exports.getCustomer = async function (id) {
+    const customer = await querySelectById(id);
+    if (customer == null) {
+        throw utils.errorHandling(errors.invalidCustomerId);
+    }
+    return customer;
+};
+
+/**
+ *
  * @returns {Promise<String>} Customer ID
  */
 async function genID() {
@@ -93,6 +106,16 @@ async function genID() {
  */
 async function querySelect(storeId, email) {
     const result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectCustomer, storeId, email);
+    return result;
+}
+
+/**
+ *
+ * @param {String} id Customer Id
+ * @returns {Promise<CustomerModel>}
+ */
+async function querySelectById(id) {
+    const result = await dbMgr.mysql.commerce.selectOne(querys.commerce.selectCustomerById, id);
     return result;
 }
 

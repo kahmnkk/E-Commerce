@@ -35,7 +35,12 @@ exports.purchase = async function (storeId, customerId, products, custom) {
     order.status = Type.OrderStatus.COMPLETED;
     order.customer = customerId;
     order.products = products.map((x) => x.id);
+    order.price = 0;
     order.custom = custom;
+
+    for (let i in products) {
+        order.price += products[i].price;
+    }
 
     await dbMgr.set(dbMgr.mysqlConn.commerce, [queryInsert(order)]);
 };
@@ -57,6 +62,21 @@ exports.refund = async function (orderId, customerId) {
     order.status = Type.OrderStatus.REFUNDED;
 
     await dbMgr.set(dbMgr.mysqlConn.commerce, [queryUpdateStatus(order)]);
+};
+
+/**
+ *
+ * @param {Array<ProductModel>} products Product Array
+ * @param {String} storeId Store ID
+ * @returns {Boolean}
+ */
+exports.isValidProducts = function (products, storeId) {
+    for (let i in products) {
+        if (products[i].store != storeId) {
+            return false;
+        }
+    }
+    return true;
 };
 
 /**
@@ -95,7 +115,7 @@ async function querySelectByCustomer(customerId) {
 function queryInsert(order) {
     // INSERT INTO tb_commerce_order (id, store, status, customer, products, price, custom) VALUES (?, ?, ?, ?, ?, ?, ?)
     const query = dbMgr.mysql.commerce.makeQuery(
-        querys.commerce.insertProduct,
+        querys.commerce.insertOrder,
         order.id,
         order.store,
         order.status,

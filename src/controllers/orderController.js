@@ -69,12 +69,21 @@ exports.purchase = async function (req, res) {
             throw utils.errorHandling(errors.unauthorized);
         }
 
+        const customer = await customerService.getCustomer(customerId);
+        if (customer.store != storeId) {
+            throw utils.errorHandling(errors.invalidCustomerId);
+        }
+
         const store = await storeService.getStore(storeId);
         if (storeService.checkCustom(store.custom, Type.Models.ORDER, custom) == false) {
             throw utils.errorHandling(errors.customFieldMismatch);
         }
 
         const products = await productService.getProducts(productIds, storeId);
+        if (orderService.isValidProducts(products, storeId) == false) {
+            throw utils.errorHandling(errors.invalidProductIncluded);
+        }
+
         await orderService.purchase(storeId, customerId, products, custom);
 
         response[resKeys.result] = true;
@@ -108,7 +117,7 @@ exports.refund = async function (req, res) {
             throw utils.errorHandling(errors.unauthorized);
         }
 
-        await orderService.refund(orderId);
+        await orderService.refund(orderId, customerId);
 
         response[resKeys.result] = true;
         session.send(response, Type.HttpStatus.OK);

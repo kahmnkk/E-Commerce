@@ -113,6 +113,11 @@ const errors = {
         statusCode: Type.HttpStatus.Conflict,
         message: 'order already refunded',
     },
+    invalidProductIncluded: {
+        code: 14002,
+        statusCode: Type.HttpStatus.NotAcceptable,
+        message: 'invalid product included',
+    },
 };
 
 module.exports = errors;

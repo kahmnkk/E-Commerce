@@ -34,6 +34,9 @@ exports.getProducts = async function (ids, storeId = null) {
     } else {
         products = await querySelectByIds(ids);
     }
+    if (products.length != ids.length) {
+        throw utils.errorHandling(errors.invalidProductId);
+    }
     return products;
 };
 
