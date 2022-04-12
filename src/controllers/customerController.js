@@ -33,11 +33,11 @@ exports.signIn = async function (req, res) {
             throw utils.errorHandling(errors.invalidRequestData);
         }
 
-        const store = body[reqKeys.store];
+        const storeId = body[reqKeys.store];
         const email = body[reqKeys.email];
         const password = body[reqKeys.password];
 
-        const customer = await customerService.signIn(store, email, password);
+        const customer = await customerService.signIn(storeId, email, password);
 
         session.addValue(req, 'cid', customer.id);
 
@@ -111,10 +111,10 @@ exports.checkDuplicateEmail = async function (req, res) {
             throw utils.errorHandling(errors.invalidRequestData);
         }
 
-        const store = body[reqKeys.store];
+        const storeId = body[reqKeys.store];
         const email = body[reqKeys.email];
 
-        const result = await customerService.checkDuplicateEmail(store, email);
+        const result = await customerService.checkDuplicateEmail(storeId, email);
 
         response[resKeys.result] = result;
         session.send(response, Type.HttpStatus.OK);
