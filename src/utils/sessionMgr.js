@@ -19,7 +19,6 @@ class SessionMgr {
         this.res = res;
 
         this.sessionKeys = {
-            uid: 'uid',
             cid: 'cid', // customer id
         };
         this.session = req.session;
@@ -28,10 +27,6 @@ class SessionMgr {
     send(res, statusCode = Type.HttpStatus.OK) {
         logger.info('[' + this.res.txid + '] res: ' + JSON.stringify(res));
         this.res.status(statusCode).send({ data: res });
-    }
-
-    sendOrigin(res) {
-        this.res.send(res);
     }
 
     error(err) {
@@ -62,20 +57,14 @@ class SessionMgr {
     create(req) {
         if (this.isEmpty() == false) this.remove(req);
 
-        const uid = uniqid('ss-');
-        req.session[this.sessionKeys.uid] = uid;
+        req.session[this.sessionKeys.cid] = '';
         this.session = req.session;
-        return uid;
     }
 
     addValue(req, key, val) {
         if (this.session[key] == null) return false;
         req.session[this.sessionKeys[key]] = val;
         return true;
-    }
-
-    getUid() {
-        return this.session[this.sessionKeys.uid];
     }
 
     getCid() {

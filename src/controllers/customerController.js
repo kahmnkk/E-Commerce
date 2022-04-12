@@ -33,6 +33,8 @@ exports.signIn = async function (req, res) {
             throw utils.errorHandling(errors.invalidRequestData);
         }
 
+        session.create(req);
+
         const storeId = body[reqKeys.store];
         const email = body[reqKeys.email];
         const password = body[reqKeys.password];
