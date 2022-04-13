@@ -1,9 +1,10 @@
-// npm
+// Module
 const express = require('express');
 const session = require('express-session');
 const sessionStore = require('connect-redis')(session);
 const uniqid = require('uniqid');
 const cors = require('cors');
+require('dotenv').config();
 
 // Common
 const config = require('@root/config');
@@ -39,7 +40,7 @@ class ExpressServer {
         this.app.use(
             session({
                 store: new sessionStore(options.sessionStore),
-                secret: '123456789!@#$%^&*(',
+                secret: process.env.PASSWORD_SALT,
                 resave: false,
                 saveUninitialized: true,
             }),
