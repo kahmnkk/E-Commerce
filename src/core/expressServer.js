@@ -40,7 +40,7 @@ class ExpressServer {
         this.app.use(
             session({
                 store: new sessionStore(options.sessionStore),
-                secret: process.env.Session_Secret,
+                secret: process.env.SESSION_SECRET,
                 resave: false,
                 saveUninitialized: true,
             }),
