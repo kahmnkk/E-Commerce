@@ -1,3 +1,4 @@
+// Common
 const config = require('@root/config');
 const errors = require('@src/errors');
 

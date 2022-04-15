@@ -1,12 +1,7 @@
-// Module
-const uniqid = require('uniqid');
-
 // common
-const errors = require('@src/errors');
 const config = require('@root/config');
 
 // utils
-const utils = require('@src/utils/utils');
 const logger = require('@src/utils/logger');
 const Type = require('@root/src/utils/type');
 

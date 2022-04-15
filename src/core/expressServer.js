@@ -7,7 +7,6 @@ const cors = require('cors');
 require('dotenv').config();
 
 // Common
-const config = require('@root/config');
 const errors = require('@src/errors');
 
 // Utils
@@ -32,7 +31,6 @@ class ExpressServer {
 
         this.port = options.port;
         this.app = express();
-        options.secret = '';
 
         // CORS 처리
         this.app.use(cors({ origin: true, credentials: true }));

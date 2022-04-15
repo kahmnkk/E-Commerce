@@ -7,9 +7,5 @@
             "@root/*": ["./*"],
             "@src/*": ["./src/*"]
         }
-        // "checkJs": true,
-        // "moduleResolution": "node",
-        // "resolveJsonModule": true,
-        // "esModuleInterop": true
     }
 }

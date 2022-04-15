@@ -1,5 +1,7 @@
+// Modules
 const mysql = require('mysql2/promise');
 
+// Common
 const errors = require('@src/errors');
 const utils = require('@src/utils/utils');
 const logger = require('@src/utils/logger');
