@@ -1,6 +1,6 @@
-# six-shop
+# E-Commerce
 
-식스샵 백엔드 개발자 과제  
+E-Commerce 서비스
 누구나 상점을 개설하고 상품을 판매할 수 있는 e-commerce 서비스
 
 <br></br>
